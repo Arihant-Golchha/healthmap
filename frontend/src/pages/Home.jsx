@@ -6,20 +6,22 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col">
             {/* Navbar */}
-            <nav className="flex flex-wrap items-center justify-between px-6 md:px-12 py-4 md:py-6 max-w-7xl mx-auto w-full sticky top-0 bg-slate-50/80 backdrop-blur-md z-50 border-b border-transparent transition-all gap-4">
-                <Link to="/" className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start hover:opacity-90 transition-opacity">
-                    <img src={logo} alt="HealthMap Logo" className="h-10 w-10 object-contain" />
-                    <span className="text-2xl font-bold tracking-tight text-teal-900">HealthMap</span>
-                </Link>
-                <div className="flex gap-2 sm:gap-4 items-center w-full sm:w-auto justify-center sm:justify-end">
-                    <Link to="/login" className="px-5 py-2.5 text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors">
-                        Sign In
+            <header className="sticky top-0 z-50 w-full bg-slate-50/90 backdrop-blur-md border-b border-slate-200/50">
+                <nav className="flex flex-wrap items-center justify-between px-6 md:px-12 py-4 md:py-6 max-w-7xl mx-auto w-full transition-all gap-4">
+                    <Link to="/" className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start hover:opacity-90 transition-opacity">
+                        <img src={logo} alt="HealthMap Logo" className="h-10 w-10 object-contain" />
+                        <span className="text-2xl font-bold tracking-tight text-teal-900">HEALTHMAP</span>
                     </Link>
-                    <Link to="/register" className="px-5 py-2.5 text-sm font-medium bg-teal-600 text-white rounded-xl shadow-sm hover:bg-teal-700 hover:shadow-md transition-all duration-300">
-                        Get Started
-                    </Link>
-                </div>
-            </nav>
+                    <div className="flex gap-2 sm:gap-4 items-center w-full sm:w-auto justify-center sm:justify-end">
+                        <Link to="/login" className="px-5 py-2.5 text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors">
+                            Sign In
+                        </Link>
+                        <Link to="/register" className="px-5 py-2.5 text-sm font-medium bg-teal-600 text-white rounded-xl shadow-sm hover:bg-teal-700 hover:shadow-md transition-all duration-300">
+                            Get Started
+                        </Link>
+                    </div>
+                </nav>
+            </header>
 
             {/* Hero Section */}
             <main className="flex-grow">
@@ -100,7 +102,7 @@ export default function Home() {
                 <section className="py-24 bg-slate-900 text-white overflow-hidden relative">
                     <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-teal-600/20 blur-3xl"></div>
                     <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl"></div>
-                    
+
                     <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
                         <div className="mb-16 md:w-full text-center">
                             <h2 className="text-3xl md:text-5xl font-bold mb-6">How HealthMap Works</h2>
@@ -151,7 +153,7 @@ export default function Home() {
                         <Link to="/register" className="px-8 py-4 text-lg font-medium bg-slate-900 text-white rounded-full shadow-xl hover:bg-slate-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
                             Create Free Account <ChevronRight className="h-5 w-5" />
                         </Link>
-                        
+
                         <div className="mt-8 flex items-center justify-center gap-6 text-sm text-slate-500 font-medium">
                             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-teal-500" /> No hidden fees</span>
                             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-teal-500" /> Cancel anytime</span>

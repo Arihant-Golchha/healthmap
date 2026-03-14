@@ -22,7 +22,7 @@ export default function Login() {
             if (res.data.user && res.data.user.name) {
                 localStorage.setItem("userName", res.data.user.name)
             }
-            
+
             // Redirect based on role
             if (res.data.role === 'admin') {
                 window.location = "/admin"
@@ -48,7 +48,7 @@ export default function Login() {
                     <div className="flex justify-center mb-8">
                         <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
                             <img src={logo} alt="HealthMap Logo" className="h-10 w-10 object-contain" />
-                            <span className="text-2xl font-bold text-teal-900">HealthMap</span>
+                            <span className="text-2xl font-bold text-teal-900">HEALTHMAP</span>
                         </Link>
                     </div>
 
@@ -96,8 +96,8 @@ export default function Login() {
                             </div>
                         </div>
 
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={loading}
                             className="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                         >

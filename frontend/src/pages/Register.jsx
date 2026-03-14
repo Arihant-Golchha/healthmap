@@ -28,7 +28,7 @@ export default function Register() {
         // Fetch verified hospitals for doctor dropdown
         API.get("/auth/verified-hospitals")
             .then(res => setHospitals(res.data))
-            .catch(() => {})
+            .catch(() => { })
     }, [])
 
     const register = async (e) => {
@@ -72,7 +72,7 @@ export default function Register() {
                     <div className="flex justify-center mb-8">
                         <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
                             <img src={logo} alt="HealthMap Logo" className="h-10 w-10 object-contain" />
-                            <span className="text-2xl font-bold text-teal-900">HealthMap</span>
+                            <span className="text-2xl font-bold text-teal-900">HEALTHMAP</span>
                         </Link>
                     </div>
 
@@ -98,9 +98,8 @@ export default function Register() {
                                     <button
                                         type="button"
                                         onClick={() => setRole("patient")}
-                                        className={`flex flex-col items-center justify-center py-2 rounded-lg text-xs font-medium transition-all ${
-                                            role === "patient" ? "bg-white text-teal-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                                        }`}
+                                        className={`flex flex-col items-center justify-center py-2 rounded-lg text-xs font-medium transition-all ${role === "patient" ? "bg-white text-teal-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                                            }`}
                                     >
                                         <User className="h-4 w-4 mb-1" />
                                         Patient
@@ -108,9 +107,8 @@ export default function Register() {
                                     <button
                                         type="button"
                                         onClick={() => setRole("doctor")}
-                                        className={`flex flex-col items-center justify-center py-2 rounded-lg text-xs font-medium transition-all ${
-                                            role === "doctor" ? "bg-white text-teal-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                                        }`}
+                                        className={`flex flex-col items-center justify-center py-2 rounded-lg text-xs font-medium transition-all ${role === "doctor" ? "bg-white text-teal-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                                            }`}
                                     >
                                         <BriefcaseMedical className="h-4 w-4 mb-1" />
                                         Doctor
@@ -118,9 +116,8 @@ export default function Register() {
                                     <button
                                         type="button"
                                         onClick={() => setRole("hospital")}
-                                        className={`flex flex-col items-center justify-center py-2 rounded-lg text-xs font-medium transition-all ${
-                                            role === "hospital" ? "bg-white text-teal-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                                        }`}
+                                        className={`flex flex-col items-center justify-center py-2 rounded-lg text-xs font-medium transition-all ${role === "hospital" ? "bg-white text-teal-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                                            }`}
                                     >
                                         <Building2 className="h-4 w-4 mb-1" />
                                         Hospital

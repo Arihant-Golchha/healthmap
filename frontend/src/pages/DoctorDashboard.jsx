@@ -56,7 +56,7 @@ export default function DoctorDashboard() {
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
                         <img src={logo} alt="HealthMap Logo" className="h-8 w-8 object-contain" />
-                        <span className="text-xl font-bold text-indigo-900">HealthMap Portal</span>
+                        <span className="text-xl font-bold text-indigo-900">HEALTHMAP PORTAL</span>
                     </Link>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-3 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg text-sm font-medium">

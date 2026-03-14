@@ -74,7 +74,7 @@ export default function UploadReport() {
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
                         <img src={logo} alt="HealthMap Logo" className="h-8 w-8 object-contain" />
-                        <span className="text-lg sm:text-xl font-bold text-teal-900">HealthMap Portal</span>
+                        <span className="text-lg sm:text-xl font-bold text-teal-900">HEALTHMAP PORTAL</span>
                     </Link>
                     <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-600 bg-slate-100 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
                         <User className="h-3 w-3 sm:h-4 sm:w-4" />
