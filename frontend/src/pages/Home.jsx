@@ -41,7 +41,7 @@ export default function Home() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
-                            <Link to="/register" className="px-8 py-4 text-lg font-medium bg-teal-600 text-white rounded-xl shadow-lg hover:bg-teal-700 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group">
+                            <Link to="/register?role=patient" className="px-8 py-4 text-lg font-medium bg-teal-600 text-white rounded-xl shadow-lg hover:bg-teal-700 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group">
                                 <Users className="h-5 w-5 group-hover:scale-110 transition-transform" />
                                 Join as Patient
                             </Link>
@@ -69,8 +69,8 @@ export default function Home() {
                             {[
                                 {
                                     icon: <Lock className="h-8 w-8 text-teal-600" />,
-                                    title: "Bank-Grade Security",
-                                    desc: "Your records are encrypted and stored safely. Only you control who sees your data."
+                                    title: "Patient Controlled Access",
+                                    desc: "Top-level encryption ensures your medical data remains private. You have full control over who gets access to your records."
                                 },
                                 {
                                     icon: <FileText className="h-8 w-8 text-teal-600" />,
@@ -101,7 +101,7 @@ export default function Home() {
                     <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl"></div>
                     
                     <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-                        <div className="mb-16 md:w-1/2">
+                        <div className="mb-16 md:w-full text-center">
                             <h2 className="text-3xl md:text-5xl font-bold mb-6">How HealthMap Works</h2>
                             <p className="text-slate-400 text-lg">A simple 3-step process to taking control of your medical journey.</p>
                         </div>

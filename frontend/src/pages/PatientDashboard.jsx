@@ -116,7 +116,7 @@ export default function PatientDashboard() {
                     <div className="flex items-center gap-4">
                         <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg">
                             <User className="h-4 w-4" />
-                            {data.name}
+                            {data.name} {data.gender ? `(${data.gender})` : ''}
                         </div>
                         <button onClick={logout} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors" title="Logout">
                             <LogOut className="h-5 w-5" />
