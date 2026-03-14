@@ -7,11 +7,24 @@ import API from "../services/api"
 export default function DoctorDashboard() {
     const [accessCode, setAccessCode] = useState("")
     const [patientData, setPatientData] = useState(null)
+    const [doctorProfile, setDoctorProfile] = useState(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
 
-    const doctorName = localStorage.getItem("userName") || "Doctor"
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await API.post("/doctor/dashboard", { accessCode: "" })
+                setDoctorProfile(res.data.doctor)
+            } catch (err) {
+                console.error("Failed to fetch doctor profile")
+            }
+        }
+        fetchProfile()
+    }, [])
 
+    const doctorName = doctorProfile?.name || localStorage.getItem("userName") || "Doctor"
+    
     const logout = () => {
         localStorage.clear()
         window.location = "/login"
@@ -71,8 +84,60 @@ export default function DoctorDashboard() {
 
             <main className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
                 <div className="mb-10 text-center max-w-2xl mx-auto">
-                    <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Welcome, Dr. {doctorName.replace(/^Dr\.\s*/i, '')}</h1>
-                    <p className="text-slate-500 text-lg">Enter the 6-digit access code provided by your patient to securely view their medical history and verify reports.</p>
+                    <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Welcome, Dr. {doctorName.replace(/^Dr\.\s*/i, '')}</h1>
+                    <p className="text-slate-500 text-lg">Manage your professional profile and access patient records securely.</p>
+                </div>
+
+                {/* Doctor Profile Section */}
+                {doctorProfile && (
+                    <div className="max-w-4xl mx-auto mb-12 animate-in fade-in duration-700">
+                        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between">
+                                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                    <User className="h-5 w-5" />
+                                    Personal Information
+                                </h2>
+                                <span className="bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">
+                                    Verified Practitioner
+                                </span>
+                            </div>
+                            <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-white">
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Full Name</p>
+                                    <p className="text-slate-800 font-bold text-lg">Dr. {doctorProfile.name.replace(/^Dr\.\s*/i, '')}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Doctor ID</p>
+                                    <p className="text-indigo-700 font-mono font-bold">{doctorProfile.doctorId}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Specialty</p>
+                                    <p className="text-slate-800 font-bold">{doctorProfile.specialty}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Hospital</p>
+                                    <p className="text-slate-800 font-bold">{doctorProfile.hospitalName}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Phone Number</p>
+                                    <p className="text-slate-800 font-bold">{doctorProfile.phoneNumber}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Email Address</p>
+                                    <p className="text-slate-800 font-bold">{doctorProfile.email}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gender</p>
+                                    <p className="text-slate-800 font-bold">{doctorProfile.gender}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <div className="max-w-2xl mx-auto mb-10 text-center">
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Patient Records Access</h2>
+                    <p className="text-slate-500">Enter a patient's access code to view and verify their reports.</p>
                 </div>
 
                 <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden mb-12">

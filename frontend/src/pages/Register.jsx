@@ -19,6 +19,8 @@ export default function Register() {
     const [hospitalId, setHospitalId] = useState("")
     const [hospitals, setHospitals] = useState([])
     const [registrationNumber, setRegistrationNumber] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [specialty, setSpecialty] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState(false)
@@ -43,18 +45,44 @@ export default function Register() {
                     setLoading(false)
                     return
                 }
+                if (phoneNumber.length !== 10 || !/^\d+$/.test(phoneNumber)) {
+                    setError("Phone Number must be exactly 10 digits")
+                    setLoading(false)
+                    return
+                }
                 payload.dob = dob
                 payload.gender = gender
                 payload.bloodGroup = bloodGroup
                 payload.aadhaarNumber = aadhaarNumber
+                payload.phoneNumber = phoneNumber
             }
             if (role === 'doctor') {
                 payload.licenseNumber = licenseNumber
                 payload.hospitalId = hospitalId
+                payload.phoneNumber = phoneNumber
+                payload.specialty = specialty
+                payload.gender = gender
             }
             if (role === 'hospital') payload.registrationNumber = registrationNumber
 
-            await API.post("/auth/register", payload)
+            const res = await API.post("/auth/register", payload)
+
+            if (res.data.token) {
+                // Auto login for patients
+                localStorage.clear()
+                localStorage.setItem("token", res.data.token)
+                localStorage.setItem("role", res.data.role)
+                if (res.data.user && res.data.user.name) {
+                    localStorage.setItem("userName", res.data.user.name)
+                }
+
+                // Redirect based on role
+                if (res.data.role === 'patient') {
+                    window.location = "/patient"
+                    return
+                }
+            }
+
             setSuccess(true)
             setTimeout(() => navigate('/login'), 2000)
         } catch (err) {
@@ -248,6 +276,21 @@ export default function Register() {
                                             />
                                         </div>
                                     </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-slate-700 block">Phone Number</label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                required
+                                                maxLength="10"
+                                                className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-shadow"
+                                                placeholder="10 digit Phone Number"
+                                                value={phoneNumber}
+                                                onChange={e => setPhoneNumber(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
                                 </>
                             )}
 
@@ -266,6 +309,50 @@ export default function Register() {
                                                 placeholder="e.g. MED-12345"
                                                 value={licenseNumber}
                                                 onChange={e => setLicenseNumber(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-slate-700 block">Gender</label>
+                                            <select
+                                                required
+                                                className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-shadow bg-white"
+                                                value={gender}
+                                                onChange={e => setGender(e.target.value)}
+                                            >
+                                                <option value="" disabled>Select Gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-slate-700 block">Specialty</label>
+                                            <input
+                                                type="text"
+                                                required
+                                                className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-shadow"
+                                                placeholder="e.g. Cardiology"
+                                                value={specialty}
+                                                onChange={e => setSpecialty(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-slate-700 block">Phone Number</label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                required
+                                                maxLength="10"
+                                                className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-shadow"
+                                                placeholder="10 digit Phone Number"
+                                                value={phoneNumber}
+                                                onChange={e => setPhoneNumber(e.target.value)}
                                             />
                                         </div>
                                     </div>

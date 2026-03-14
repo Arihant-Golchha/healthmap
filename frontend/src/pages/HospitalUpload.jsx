@@ -352,7 +352,7 @@ export default function HospitalUpload() {
                                                             >
                                                                 <Eye className="h-4 w-4" /> View
                                                             </a>
-                                                            {!report.verified && (
+                                                            {!report.verified && report.uploadedBy === hospitalName && (
                                                                 <button
                                                                     onClick={(e) => { e.stopPropagation(); deleteReport(report._id); }}
                                                                     className="flex-1 sm:flex-none px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-sm font-medium transition-all text-center flex items-center justify-center gap-1"

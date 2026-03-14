@@ -7,6 +7,7 @@ import DoctorDashboard from "./pages/DoctorDashboard"
 import HospitalUpload from "./pages/HospitalUpload"
 import UploadReport from "./pages/UploadReport"
 import AdminDashboard from "./pages/AdminDashboard"
+import Notifications from "./pages/Notifications"
 import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['patient']} />}>
             <Route path="/patient" element={<PatientDashboard />} />
             <Route path="/upload-report" element={<UploadReport />} />
+            <Route path="/notifications" element={<Notifications />} />
         </Route>
 
         {/* Doctor Routes */}

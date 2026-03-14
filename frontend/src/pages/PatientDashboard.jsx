@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { LogOut, FileText, Upload, User, Key, Calendar, RefreshCw, Trash2, CheckCircle } from "lucide-react"
+import { LogOut, FileText, Upload, User, Key, Calendar, RefreshCw, Trash2, CheckCircle, Bell } from "lucide-react"
 import logo from "../assets/logo.png"
 import API from "../services/api"
 
@@ -8,8 +8,12 @@ export default function PatientDashboard() {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
     const [regenerating, setRegenerating] = useState(false)
+    const [notifications, setNotifications] = useState([])
+    const [unreadCount, setUnreadCount] = useState(0)
+    const [error, setError] = useState(null)
     const [deletingId, setDeletingId] = useState(null)
-    const [error, setError] = useState("")
+    const [activeTab, setActiveTab] = useState("all") // all, hospital, patient
+    const [reportTypeFilter, setReportTypeFilter] = useState("All Types")
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -21,10 +25,16 @@ export default function PatientDashboard() {
             }
 
             try {
-                const res = await API.get("/patient/dashboard", {
+                const dashboardRes = await API.get("/patient/dashboard", {
                     headers: { Authorization: token }
                 })
-                setData(res.data)
+                setData(dashboardRes.data)
+
+                const notifyRes = await API.get("/patient/notifications", {
+                    headers: { Authorization: token }
+                })
+                setNotifications(notifyRes.data.notifications)
+                setUnreadCount(notifyRes.data.notifications.filter(n => !n.isRead).length)
             } catch (err) {
                 setError("Failed to load dashboard. Please log in again.")
                 if (err.response?.status === 401 || err.response?.status === 403) {
@@ -115,6 +125,14 @@ export default function PatientDashboard() {
                         <span className="text-xl font-bold text-teal-900">HEALTHMAP</span>
                     </Link>
                     <div className="flex items-center gap-4">
+                        <Link to="/notifications" className="relative p-2 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all" title="Notifications">
+                            <Bell className="h-5 w-5" />
+                            {unreadCount > 0 && (
+                                <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full ring-2 ring-white">
+                                    {unreadCount}
+                                </span>
+                            )}
+                        </Link>
                         <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg">
                             <User className="h-4 w-4" />
                             {data.name} {data.gender ? `(${data.gender})` : ''}
@@ -189,9 +207,47 @@ export default function PatientDashboard() {
                         <span className="bg-teal-100 text-teal-800 text-xs font-semibold px-2.5 py-1 rounded-full">{data.reports?.length || 0} Total</span>
                     </div>
 
+                    {/* Filter Tabs */}
+                    <div className="px-6 py-2 border-b border-slate-100 bg-slate-50 flex flex-wrap items-center gap-4">
+                        <div className="flex bg-white p-1 rounded-lg border border-slate-200">
+                            {[
+                                { id: "all", label: "All Reports" },
+                                { id: "hospital", label: "Hospital Uploads" },
+                                { id: "patient", label: "Self Uploads" }
+                            ].map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === tab.id ? "bg-teal-600 text-white shadow-sm" : "text-slate-500 hover:text-teal-600 hover:bg-teal-50"
+                                        }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <select
+                            value={reportTypeFilter}
+                            onChange={(e) => setReportTypeFilter(e.target.value)}
+                            className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        >
+                            <option value="All Types">All Types</option>
+                            {[...new Set(data.reports?.map(r => r.reportType || "General Report"))].map(type => (
+                                <option key={type} value={type}>{type}</option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div className="divide-y divide-slate-100">
-                        {data.reports && data.reports.length > 0 ? (
-                            data.reports.map((report, idx) => (
+                        {(() => {
+                            const filteredReports = data.reports?.filter(report => {
+                                const matchesTab = activeTab === "all" || report.uploadedBy === activeTab;
+                                const matchesType = reportTypeFilter === "All Types" || (report.reportType || "General Report") === reportTypeFilter;
+                                return matchesTab && matchesType;
+                            });
+
+                            return filteredReports && filteredReports.length > 0 ? (
+                                filteredReports.map((report, idx) => (
                                 <div key={idx} className="p-6 hover:bg-slate-50 transition-colors flex flex-col sm:flex-row items-center justify-between gap-4">
                                     <div className="flex items-center gap-4 w-full sm:w-auto">
                                         <div className="h-12 w-12 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center shrink-0">
@@ -236,15 +292,25 @@ export default function PatientDashboard() {
                                     <FileText className="h-8 w-8" />
                                 </div>
                                 <p className="text-slate-600 font-medium">No reports found.</p>
-                                <p className="text-slate-400 text-sm mt-1 mb-4">You haven't uploaded any reports yet.</p>
-                                <Link to="/upload-report" className="text-teal-600 hover:text-teal-700 text-sm font-medium bg-teal-50 px-4 py-2 rounded-lg">
-                                    Upload First Report
-                                </Link>
+                                <p className="text-slate-400 text-sm mt-1 mb-4">No reports match your current filters.</p>
+                                {activeTab !== "all" || reportTypeFilter !== "All Types" ? (
+                                    <button
+                                        onClick={() => { setActiveTab("all"); setReportTypeFilter("All Types"); }}
+                                        className="text-teal-600 hover:text-teal-700 text-sm font-medium bg-teal-50 px-4 py-2 rounded-lg"
+                                    >
+                                        Clear Filters
+                                    </button>
+                                ) : (
+                                    <Link to="/upload-report" className="text-teal-600 hover:text-teal-700 text-sm font-medium bg-teal-50 px-4 py-2 rounded-lg">
+                                        Upload First Report
+                                    </Link>
+                                )}
                             </div>
-                        )}
-                    </div>
-                </section>
-            </main>
-        </div>
-    )
+                        );
+                    })()}
+                </div>
+            </section>
+        </main>
+    </div>
+)
 }
