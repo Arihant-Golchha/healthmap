@@ -1,5 +1,6 @@
 const Report = require("../models/Report")
 const Patient = require("../models/Patient")
+const Notification = require("../models/Notification")
 const cloudinary = require("../config/cloudinary")
 const generateAccessCode = require("../utils/generateAccessCode")
 
@@ -140,3 +141,31 @@ exports.deleteReport = async (req, res) => {
         res.status(500).json({ error: err.message || "Server Error" });
     }
 }
+
+exports.getNotifications = async (req, res) => {
+    try {
+        const notifications = await Notification.find({ patientId: req.user.id })
+            .sort({ createdAt: -1 });
+        res.json({ notifications });
+    } catch (err) {
+        res.status(500).json({ error: err.message || "Server Error" });
+    }
+}
+
+exports.markNotificationAsRead = async (req, res) => {
+    try {
+        await Notification.findByIdAndUpdate(req.params.id, { isRead: true });
+        res.json({ message: "Notification marked as read" });
+    } catch (err) {
+        res.status(500).json({ error: err.message || "Server Error" });
+    }
+}
+
+exports.markAllNotificationsAsRead = async (req, res) => {
+    try {
+        await Notification.updateMany({ patientId: req.user.id, isRead: false }, { isRead: true });
+        res.json({ message: "All notifications marked as read" });
+    } catch (err) {
+        res.status(500).json({ error: err.message || "Server Error" });
+    }
+}

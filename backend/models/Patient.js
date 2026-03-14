@@ -9,6 +9,7 @@ const patientSchema = new mongoose.Schema({
     dob: Date,
     gender: String,
     bloodGroup: String,
+    phoneNumber: String,
     aadhaarNumber: { type: String, unique: true },
     reports: [{
         type: mongoose.Schema.Types.ObjectId,

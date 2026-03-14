@@ -1,3 +1,4 @@
+const Notification = require("../models/Notification")
 const Patient = require("../models/Patient")
 const Report = require("../models/Report")
 const cloudinary = require("../config/cloudinary")
@@ -18,6 +19,12 @@ exports.uploadHospitalReport = async (req, res) => {
 
         const file = req.file
 
+        if (!file) {
+            return res.status(400).json({
+                message: "No file uploaded"
+            })
+        }
+
         const upload = cloudinary.uploader.upload_stream(
             { resource_type: "auto" },
 
@@ -36,6 +43,14 @@ exports.uploadHospitalReport = async (req, res) => {
 
                     await Patient.findByIdAndUpdate(patient._id, {
                         $push: { reports: report._id }
+                    })
+
+                    // Create Notification
+                    await Notification.create({
+                        patientId: patient._id,
+                        message: `A new report (${report.reportType}) has been uploaded by ${hospitalName || "a hospital"}.`,
+                        type: 'UPLOAD',
+                        reportId: report._id
                     })
 
                     res.json(report)
@@ -91,44 +106,38 @@ exports.rejectDoctor = async (req, res) => {
     }
 };
 
-// Get all reports uploaded by this hospital, grouped by patient
+// Get all reports for patients this hospital has uploaded for, grouped by patient
 exports.getHospitalReports = async (req, res) => {
     try {
         const hospitalId = req.user.id;
 
-        const reports = await Report.find({ uploadedByHospitalId: hospitalId })
-            .populate("patientId", "name medicalId gender")
-            .sort({ createdAt: -1 });
+        // 1. Get unique patient IDs this hospital has uploaded reports for
+        const uniquePatientIds = await Report.distinct("patientId", { uploadedByHospitalId: hospitalId });
 
-        // Group reports by patient
-        const patientMap = {};
+        // 2. Fetch those patients and populate ALL their reports
+        const patientsData = await Patient.find({ _id: { $in: uniquePatientIds } })
+            .populate({
+                path: 'reports',
+                options: { sort: { createdAt: -1 } }
+            });
 
-        reports.forEach(report => {
-            if (!report.patientId) return;
-
-            const pid = report.patientId._id.toString();
-
-            if (!patientMap[pid]) {
-                patientMap[pid] = {
-                    patientId: pid,
-                    name: report.patientId.name,
-                    medicalId: report.patientId.medicalId,
-                    gender: report.patientId.gender,
-                    reports: []
-                };
-            }
-
-            patientMap[pid].reports.push({
+        // 3. Format the response to match the expected structure
+        const patients = patientsData.map(patient => ({
+            patientId: patient._id,
+            name: patient.name,
+            medicalId: patient.medicalId,
+            gender: patient.gender,
+            reports: patient.reports.map(report => ({
                 _id: report._id,
                 reportType: report.reportType,
                 fileUrl: report.fileUrl,
                 verified: report.verified,
                 verifiedByDoctor: report.verifiedByDoctor,
+                uploadedBy: report.uploadedBy,
+                uploadedByHospitalId: report.uploadedByHospitalId, // Needed for frontend deletion logic
                 createdAt: report.createdAt
-            });
-        });
-
-        const patients = Object.values(patientMap);
+            }))
+        }));
 
         res.json({ patients });
     } catch (err) {

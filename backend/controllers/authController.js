@@ -9,7 +9,7 @@ const generateAccessCode = require("../utils/generateAccessCode")
 
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role, licenseNumber, registrationNumber, dob, gender, bloodGroup, aadhaarNumber, hospitalId } = req.body
+        const { name, email, password, role, licenseNumber, registrationNumber, dob, gender, bloodGroup, aadhaarNumber, hospitalId, phoneNumber, specialty } = req.body
 
         if (!role || !['patient', 'doctor', 'hospital'].includes(role)) {
             return res.status(400).json({ error: "Invalid role specified" })
@@ -35,9 +35,17 @@ exports.register = async (req, res) => {
                 dob,
                 gender,
                 bloodGroup,
-                aadhaarNumber
+                aadhaarNumber,
+                phoneNumber
             })
-            return res.json({ message: "Patient registered successfully", user: { id: patient._id, role: 'patient' } })
+
+            const token = jwt.sign({ id: patient._id, role: 'patient' }, process.env.JWT_SECRET)
+            return res.json({
+                message: "Patient registered successfully",
+                token,
+                role: 'patient',
+                user: { id: patient._id, name: patient.name, email: patient.email }
+            })
         }
 
         if (role === 'doctor') {
@@ -54,7 +62,10 @@ exports.register = async (req, res) => {
                 password: hashed,
                 doctorId: generateMedicalId(),
                 licenseNumber,
-                hospitalId
+                hospitalId,
+                phoneNumber,
+                specialty,
+                gender
             })
             return res.json({ message: "Doctor registered successfully. Please wait for hospital verification.", user: { id: doctor._id, role: 'doctor' } })
         }
