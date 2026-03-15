@@ -8,7 +8,7 @@ const doctorSchema = new mongoose.Schema({
     licenseNumber: { type: String, required: true, unique: true },
     hospitalId: { type: mongoose.Schema.Types.ObjectId, ref: "Hospital", required: true },
     phoneNumber: { type: String },
-    specialty: { type: String },
+    specialization: { type: String },
     gender: { type: String },
     isVerified: { type: Boolean, default: false }
 }, { timestamps: true })

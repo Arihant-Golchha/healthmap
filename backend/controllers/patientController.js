@@ -168,4 +168,36 @@ exports.markAllNotificationsAsRead = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message || "Server Error" });
     }
+}
+
+exports.updateProfile = async (req, res) => {
+    try {
+        const ALLOWED = ["name", "email", "gender", "phoneNumber", "dob"]
+        const updates = {}
+        for (const key of ALLOWED) {
+            if (req.body[key] !== undefined) {
+                updates[key] = req.body[key]
+            }
+        }
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: "No valid fields to update" })
+        }
+        const patient = await Patient.findByIdAndUpdate(
+            req.user.id,
+            { $set: updates },
+            { new: true, runValidators: true }
+        )
+        if (!patient) return res.status(404).json({ error: "Patient not found" })
+        res.json({
+            name: patient.name,
+            email: patient.email,
+            gender: patient.gender,
+            phoneNumber: patient.phoneNumber,
+            dob: patient.dob,
+            medicalId: patient.medicalId,
+            doctorAccessCode: patient.doctorAccessCode
+        })
+    } catch (err) {
+        res.status(500).json({ error: err.message || "Server Error" })
+    }
 }

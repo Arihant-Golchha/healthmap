@@ -9,7 +9,9 @@ const {
     verifyDoctor,
     rejectDoctor,
     getHospitalReports,
-    deleteHospitalReport
+    deleteHospitalReport,
+    getHospitalProfile,
+    updateHospitalProfile
 } = require("../controllers/hospitalController")
 
 // Hospital auth middleware
@@ -28,5 +30,7 @@ router.put("/verify-doctor", hospitalAuth, verifyDoctor)
 router.delete("/reject-doctor", hospitalAuth, rejectDoctor)
 router.get("/my-reports", hospitalAuth, getHospitalReports)
 router.delete("/report/:id", hospitalAuth, deleteHospitalReport)
+router.get("/profile", hospitalAuth, getHospitalProfile)
+router.put("/profile", hospitalAuth, updateHospitalProfile)
 
 module.exports = router

@@ -1,6 +1,7 @@
 const Notification = require("../models/Notification")
 const Patient = require("../models/Patient")
 const Report = require("../models/Report")
+const Hospital = require("../models/Hospital")
 const cloudinary = require("../config/cloudinary")
 
 exports.uploadHospitalReport = async (req, res) => {
@@ -189,6 +190,31 @@ exports.deleteHospitalReport = async (req, res) => {
 
         res.json({ message: "Report deleted successfully", id: reportId });
 
+    } catch (err) {
+        res.status(500).json({ error: err.message || "Server Error" });
+    }
+};
+
+exports.getHospitalProfile = async (req, res) => {
+    try {
+        const hospital = await Hospital.findById(req.user.id).select("-password");
+        if (!hospital) return res.status(404).json({ error: "Hospital not found" });
+        res.json({ hospital });
+    } catch (err) {
+        res.status(500).json({ error: err.message || "Server Error" });
+    }
+};
+
+exports.updateHospitalProfile = async (req, res) => {
+    try {
+        const ALLOWED = ["name", "email", "registrationNumber"];
+        const updates = {};
+        Object.keys(req.body).forEach(key => {
+            if (ALLOWED.includes(key)) updates[key] = req.body[key];
+        });
+
+        const hospital = await Hospital.findByIdAndUpdate(req.user.id, updates, { new: true }).select("-password");
+        res.json(hospital);
     } catch (err) {
         res.status(500).json({ error: err.message || "Server Error" });
     }

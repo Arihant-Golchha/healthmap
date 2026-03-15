@@ -1,4 +1,7 @@
 const Notification = require("../models/Notification")
+const Doctor = require("../models/Doctor")
+const Patient = require("../models/Patient")
+const Report = require("../models/Report")
 
 exports.verifyReport = async (req, res) => {
 
@@ -60,7 +63,8 @@ exports.getDoctorDashboard = async (req, res) => {
             name: doctor.name,
             doctorId: doctor.doctorId,
             email: doctor.email,
-            specialty: doctor.specialty || "Not Specified",
+            specialization: doctor.specialization || "Not Specified",
+            licenseNumber: doctor.licenseNumber || "Not Specified",
             phoneNumber: doctor.phoneNumber || "Not Specified",
             gender: doctor.gender || "Not Specified",
             hospitalName: doctor.hospitalId?.name || "Not Assigned"
@@ -92,3 +96,36 @@ exports.getDoctorDashboard = async (req, res) => {
         res.status(500).json({ error: err.message || "Server Error" });
     }
 };
+
+exports.updateDoctorProfile = async (req, res) => {
+    try {
+        const ALLOWED = ["name", "gender", "phoneNumber"]
+        const updates = {}
+        for (const key of ALLOWED) {
+            if (req.body[key] !== undefined) {
+                updates[key] = req.body[key]
+            }
+        }
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: "No valid fields to update" })
+        }
+        const doctor = await Doctor.findByIdAndUpdate(
+            req.user.id,
+            { $set: updates },
+            { new: true, runValidators: true }
+        ).populate("hospitalId", "name")
+        if (!doctor) return res.status(404).json({ error: "Doctor not found" })
+        res.json({
+            name: doctor.name,
+            doctorId: doctor.doctorId,
+            email: doctor.email,
+            specialization: doctor.specialization || "Not Specified",
+            licenseNumber: doctor.licenseNumber || "Not Specified",
+            phoneNumber: doctor.phoneNumber || "Not Specified",
+            gender: doctor.gender || "Not Specified",
+            hospitalName: doctor.hospitalId?.name || "Not Assigned"
+        })
+    } catch (err) {
+        res.status(500).json({ error: err.message || "Server Error" })
+    }
+}
