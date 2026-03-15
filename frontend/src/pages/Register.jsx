@@ -81,6 +81,10 @@ export default function Register() {
                     window.location = "/patient"
                     return
                 }
+                if (res.data.role === 'hospital') {
+                    window.location = "/hospital"
+                    return
+                }
             }
 
             setSuccess(true)

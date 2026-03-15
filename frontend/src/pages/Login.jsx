@@ -24,9 +24,7 @@ export default function Login() {
             }
 
             // Redirect based on role
-            if (res.data.role === 'admin') {
-                window.location = "/admin"
-            } else if (res.data.role === 'doctor') {
+            if (res.data.role === 'doctor') {
                 window.location = "/doctor"
             } else if (res.data.role === 'hospital') {
                 window.location = "/hospital"

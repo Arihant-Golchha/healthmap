@@ -1,7 +1,6 @@
 const Patient = require("../models/Patient")
 const Doctor = require("../models/Doctor")
 const Hospital = require("../models/Hospital")
-const Admin = require("../models/Admin")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const generateMedicalId = require("../utils/generateMedicalid")
@@ -81,10 +80,17 @@ exports.register = async (req, res) => {
                 name,
                 email,
                 password: hashed,
-                hospitalId: generateMedicalId(), // Or a different generator for hospitals
-                registrationNumber
+                hospitalId: generateMedicalId(),
+                registrationNumber,
+                isVerified: true
             })
-            return res.json({ message: "Hospital registered successfully. Please wait for admin verification.", user: { id: hospital._id, role: 'hospital' } })
+            const token = jwt.sign({ id: hospital._id, role: 'hospital' }, process.env.JWT_SECRET)
+            return res.json({
+                message: "Hospital registered successfully.",
+                token,
+                role: 'hospital',
+                user: { id: hospital._id, name: hospital.name, email: hospital.email }
+            })
         }
 
     } catch (err) {
@@ -110,23 +116,15 @@ exports.login = async (req, res) => {
             role = 'hospital'
         }
 
-        if (!user) {
-            user = await Admin.findOne({ email })
-            role = 'admin'
-        }
-
         if (!user) return res.status(400).json({ error: "User not found" })
 
         const valid = await bcrypt.compare(password, user.password)
 
         if (!valid) return res.status(400).json({ error: "Wrong password" })
 
-        // Check verification for doctors and hospitals
+        // Check verification for doctors
         if (role === 'doctor' && !user.isVerified) {
             return res.status(403).json({ error: "Your account is pending verification by a hospital." })
-        }
-        if (role === 'hospital' && !user.isVerified) {
-            return res.status(403).json({ error: "Your account is pending verification by the admin." })
         }
 
         const token = jwt.sign({ id: user._id, role }, process.env.JWT_SECRET)
