@@ -32,7 +32,7 @@ export default function PatientDashboard() {
                 setData(dashboardRes.data)
 
                 const notifyRes = await API.get("/patient/notifications", {
-                    headers: { Authorization: token }
+                    headers: { Authorization: `Bearer{token}` }
                 })
                 setNotifications(notifyRes.data.notifications)
                 setUnreadCount(notifyRes.data.notifications.filter(n => !n.isRead).length)
