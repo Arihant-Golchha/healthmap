@@ -10,10 +10,10 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
-app.use("/api/auth", authRoutes)
-app.use("/api/patient", patientRoutes)
-app.use("/api/doctor", doctorRoutes)
-app.use("/api/hospital", hospitalRoutes)
+app.use("/auth", authRoutes)
+app.use("/patient", patientRoutes)
+app.use("/doctor", doctorRoutes)
+app.use("/hospital", hospitalRoutes)
 
 mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 5000
