@@ -170,13 +170,16 @@ export default function Home() {
             </main>
 
             {/* Footer */}
-            <footer className="bg-black  py-4">
+            <footer className="bg-black  py-4
+            
+            
+            ">
                 <div className="max-w-7xl mx-auto px-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div>
                     <div className="flex items-center gap-2">
                         <img src={logo} alt="HealthMap Logo" className="h-8 w-8 object-contain" />
                         <span className="text-2xl font-manrope py-1
-                        font-bold text-green-600 ">
+                        font-bold text-white ">
 HEALTHMAP
 </span>
                     </div>

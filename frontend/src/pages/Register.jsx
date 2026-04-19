@@ -65,7 +65,7 @@ export default function Register() {
             }
             if (role === 'hospital') payload.registrationNumber = registrationNumber
 
-            const res = await API.post("/auth/register", payload)
+            const res = await API.post("/api/auth/register", payload)
 
             if (res.data.token) {
                 // Auto login for patients
